@@ -34,7 +34,10 @@ module.exports = {
       path:{
         url: "/api/login",
         methods: ["POST"],
-      }
-    }
-  }
+      },
+    },
+  },
+    bcrypt: {
+      SALT_ROUNDS: 12,
+    },
 };

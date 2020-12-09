@@ -1,3 +1,6 @@
+const bcrypt = require("bcryptjs");
+const config = require("../config");
+
 class UserService {
   constructor({ logger, userModel }) {
     this.userModel = userModel;
@@ -30,7 +33,14 @@ class UserService {
 
   async createUser(userDTO) {
     try {
-      const user = await this.userModel.create(userDTO);
+      this.logger.info(`Hashing password for user "${userDTO,username}"`);
+      const hashedPassword = await bcrypt.hash(
+        userDTO.password, 
+        config.bcrypt.SALT_ROUNDES);
+
+      const user = await this.userModel.create({
+        ...userDTO,
+          password:hashedPassword,});
       return user;
     } catch (err) {
       this.logger.error("Error %o", err);
@@ -48,7 +58,16 @@ class UserService {
         throw new Error(`No user with id ${userDTO.id} found`);
       }
 
-      const { id, ..._userDTO } = userDTO;
+      const { id, password,  ..._userDTO } = userDTO;
+
+      if(password){
+        const hashedPassword = await bcrypt.hash(
+          userDTO.password, 
+          config.bcrypt.SALT_ROUNDES);
+
+          _userDTO.password=hashedPassword;
+
+      }
       user = user.update(_userDTO);
       return user;
     } catch (err) {
