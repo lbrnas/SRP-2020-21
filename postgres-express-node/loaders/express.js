@@ -22,7 +22,6 @@ module.exports = ({ app, HttpLogger: logger }) => {
       algorithms: config.jwt.algorithms,
     }).unless(config.jwt.exclude)
   );
-
   //---------------------------
   // LOAD/MOUNT API ROUTES
   // (path prefix e.g. /api)
